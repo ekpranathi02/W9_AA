@@ -1,54 +1,44 @@
 import java.util.Scanner;
 
-abstract class Staff {
-    String name;
+abstract class LibraryItem {
+    String title;
+    int daysLate;
 
-    Staff(String name) {
-        this.name = name;
+    LibraryItem(String title, int daysLate) {
+        this.title = title;
+        this.daysLate = daysLate;
     }
 
-    abstract double getPay();
+    abstract double getFine();
 }
 
-class FullTime extends Staff {
-    double salary;
-
-    FullTime(String name, double salary) {
-        super(name);
-        this.salary = salary;
+class Book extends LibraryItem {
+    Book(String title, int daysLate) {
+        super(title, daysLate);
     }
 
-    double getPay() {
-        return salary;
-    }
-}
-
-class Hourly extends Staff {
-    double hours, rate;
-
-    Hourly(String name, double hours, double rate) {
-        super(name);
-        this.hours = hours;
-        this.rate = rate;
-    }
-
-    double getPay() {
-        if (hours <= 40)
-            return hours * rate;
-        return 40 * rate + (hours - 40) * rate * 1.5;
+    double getFine() {
+        return daysLate * 2.0;
     }
 }
 
-class Intern extends Staff {
-    double stipend;
-
-    Intern(String name, double stipend) {
-        super(name);
-        this.stipend = stipend;
+class DVD extends LibraryItem {
+    DVD(String title, int daysLate) {
+        super(title, daysLate);
     }
 
-    double getPay() {
-        return stipend;
+    double getFine() {
+        return Math.min(daysLate * 5.0, 50.0);
+    }
+}
+
+class Magazine extends LibraryItem {
+    Magazine(String title, int daysLate) {
+        super(title, daysLate);
+    }
+
+    double getFine() {
+        return daysLate * 1.0;
     }
 }
 
@@ -60,30 +50,30 @@ public class W9_AA {
 
         for (int i = 0; i < n; i++) {
             String type = sc.next().toUpperCase();
-            String name = sc.next();
-            Staff s;
+            String title = sc.next();
+            int days = sc.nextInt();
+            LibraryItem item;
 
             switch (type) {
-                case "FULLTIME":
-                    s = new FullTime(name, sc.nextDouble());
+                case "BOOK":
+                    item = new Book(title, days);
                     break;
-                case "HOURLY":
-                    s = new Hourly(name, sc.nextDouble(),
-                                   sc.nextDouble());
+                case "DVD":
+                    item = new DVD(title, days);
                     break;
-                case "INTERN":
-                    s = new Intern(name, sc.nextDouble());
+                case "MAGAZINE":
+                    item = new Magazine(title, days);
                     break;
                 default:
                     continue;
             }
 
-            double pay = s.getPay();
-            System.out.printf("%s: %.2f%n", name, pay);
-            total += pay;
+            double fine = item.getFine();
+            System.out.printf("%s: %.2f%n", title, fine);
+            total += fine;
         }
 
-        System.out.printf("Total Payroll: %.2f%n", total);
+        System.out.printf("Total Fines: %.2f%n", total);
         sc.close();
     }
 }
