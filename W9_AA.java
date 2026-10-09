@@ -1,53 +1,54 @@
 import java.util.Scanner;
 
-abstract class Plot {
-    String owner;
+abstract class Staff {
+    String name;
 
-    Plot(String owner) {
-        this.owner = owner;
+    Staff(String name) {
+        this.name = name;
     }
 
-    abstract double area();
+    abstract double getPay();
 }
 
-class Circle extends Plot {
-    double radius;
+class FullTime extends Staff {
+    double salary;
 
-    Circle(String owner, double radius) {
-        super(owner);
-        this.radius = radius;
+    FullTime(String name, double salary) {
+        super(name);
+        this.salary = salary;
     }
 
-    double area() {
-        return Math.PI * radius * radius;
-    }
-}
-
-class Rectangle extends Plot {
-    double length, width;
-
-    Rectangle(String owner, double length, double width) {
-        super(owner);
-        this.length = length;
-        this.width = width;
-    }
-
-    double area() {
-        return length * width;
+    double getPay() {
+        return salary;
     }
 }
 
-class Triangle extends Plot {
-    double base, height;
+class Hourly extends Staff {
+    double hours, rate;
 
-    Triangle(String owner, double base, double height) {
-        super(owner);
-        this.base = base;
-        this.height = height;
+    Hourly(String name, double hours, double rate) {
+        super(name);
+        this.hours = hours;
+        this.rate = rate;
     }
 
-    double area() {
-        return 0.5 * base * height;
+    double getPay() {
+        if (hours <= 40)
+            return hours * rate;
+        return 40 * rate + (hours - 40) * rate * 1.5;
+    }
+}
+
+class Intern extends Staff {
+    double stipend;
+
+    Intern(String name, double stipend) {
+        super(name);
+        this.stipend = stipend;
+    }
+
+    double getPay() {
+        return stipend;
     }
 }
 
@@ -58,32 +59,31 @@ public class W9_AA {
         double total = 0;
 
         for (int i = 0; i < n; i++) {
-            String shape = sc.next().toUpperCase();
-            String owner = sc.next();
-            Plot p;
+            String type = sc.next().toUpperCase();
+            String name = sc.next();
+            Staff s;
 
-            switch (shape) {
-                case "CIRCLE":
-                    p = new Circle(owner, sc.nextDouble());
+            switch (type) {
+                case "FULLTIME":
+                    s = new FullTime(name, sc.nextDouble());
                     break;
-                case "RECTANGLE":
-                    p = new Rectangle(owner, sc.nextDouble(),
-                                      sc.nextDouble());
+                case "HOURLY":
+                    s = new Hourly(name, sc.nextDouble(),
+                                   sc.nextDouble());
                     break;
-                case "TRIANGLE":
-                    p = new Triangle(owner, sc.nextDouble(),
-                                     sc.nextDouble());
+                case "INTERN":
+                    s = new Intern(name, sc.nextDouble());
                     break;
                 default:
                     continue;
             }
 
-            double a = p.area();
-            System.out.printf("%s (%s): %.2f%n", owner, shape, a);
-            total += a;
+            double pay = s.getPay();
+            System.out.printf("%s: %.2f%n", name, pay);
+            total += pay;
         }
 
-        System.out.printf("Total Area: %.2f%n", total);
+        System.out.printf("Total Payroll: %.2f%n", total);
         sc.close();
     }
 }
