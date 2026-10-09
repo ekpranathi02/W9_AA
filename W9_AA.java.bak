@@ -1,44 +1,44 @@
 import java.util.Scanner;
 
-abstract class LibraryItem {
-    String title;
-    int daysLate;
+abstract class Connection {
+    double units;
 
-    LibraryItem(String title, int daysLate) {
-        this.title = title;
-        this.daysLate = daysLate;
+    Connection(double units) {
+        this.units = units;
     }
 
-    abstract double getFine();
+    abstract double getBill();
 }
 
-class Book extends LibraryItem {
-    Book(String title, int daysLate) {
-        super(title, daysLate);
+class Home extends Connection {
+    Home(double units) {
+        super(units);
     }
 
-    double getFine() {
-        return daysLate * 2.0;
-    }
-}
-
-class DVD extends LibraryItem {
-    DVD(String title, int daysLate) {
-        super(title, daysLate);
-    }
-
-    double getFine() {
-        return Math.min(daysLate * 5.0, 50.0);
+    double getBill() {
+        if (units <= 100)
+            return units * 5;
+        return 100 * 5 + (units - 100) * 7;
     }
 }
 
-class Magazine extends LibraryItem {
-    Magazine(String title, int daysLate) {
-        super(title, daysLate);
+class Shop extends Connection {
+    Shop(double units) {
+        super(units);
     }
 
-    double getFine() {
-        return daysLate * 1.0;
+    double getBill() {
+        return units * 8 + 100;
+    }
+}
+
+class Factory extends Connection {
+    Factory(double units) {
+        super(units);
+    }
+
+    double getBill() {
+        return Math.max(units * 6, 1000);
     }
 }
 
@@ -50,30 +50,29 @@ public class W9_AA {
 
         for (int i = 0; i < n; i++) {
             String type = sc.next().toUpperCase();
-            String title = sc.next();
-            int days = sc.nextInt();
-            LibraryItem item;
+            double units = sc.nextDouble();
+            Connection c;
 
             switch (type) {
-                case "BOOK":
-                    item = new Book(title, days);
+                case "HOME":
+                    c = new Home(units);
                     break;
-                case "DVD":
-                    item = new DVD(title, days);
+                case "SHOP":
+                    c = new Shop(units);
                     break;
-                case "MAGAZINE":
-                    item = new Magazine(title, days);
+                case "FACTORY":
+                    c = new Factory(units);
                     break;
                 default:
                     continue;
             }
 
-            double fine = item.getFine();
-            System.out.printf("%s: %.2f%n", title, fine);
-            total += fine;
+            double bill = c.getBill();
+            System.out.printf("%s: %.2f%n", type, bill);
+            total += bill;
         }
 
-        System.out.printf("Total Fines: %.2f%n", total);
+        System.out.printf("Total: %.2f%n", total);
         sc.close();
     }
 }

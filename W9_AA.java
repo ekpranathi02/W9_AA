@@ -1,44 +1,47 @@
 import java.util.Scanner;
 
-abstract class Connection {
-    double units;
+abstract class Travel {
+    static final double BOOKING_FEE = 50.0;
+    double distance;
 
-    Connection(double units) {
-        this.units = units;
+    Travel(double distance) {
+        this.distance = distance;
     }
 
-    abstract double getBill();
-}
+    abstract double getFare();
 
-class Home extends Connection {
-    Home(double units) {
-        super(units);
-    }
-
-    double getBill() {
-        if (units <= 100)
-            return units * 5;
-        return 100 * 5 + (units - 100) * 7;
+    double getTotal() {
+        return getFare() + BOOKING_FEE;
     }
 }
 
-class Shop extends Connection {
-    Shop(double units) {
-        super(units);
+class Bus extends Travel {
+    Bus(double distance) {
+        super(distance);
     }
 
-    double getBill() {
-        return units * 8 + 100;
+    double getFare() {
+        return distance * 2.0;
     }
 }
 
-class Factory extends Connection {
-    Factory(double units) {
-        super(units);
+class Train extends Travel {
+    Train(double distance) {
+        super(distance);
     }
 
-    double getBill() {
-        return Math.max(units * 6, 1000);
+    double getFare() {
+        return distance * 1.5;
+    }
+}
+
+class Flight extends Travel {
+    Flight(double distance) {
+        super(distance);
+    }
+
+    double getFare() {
+        return 2500 + distance * 4.0;
     }
 }
 
@@ -46,33 +49,29 @@ public class W9_AA {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
-        double total = 0;
 
         for (int i = 0; i < n; i++) {
-            String type = sc.next().toUpperCase();
-            double units = sc.nextDouble();
-            Connection c;
+            String mode = sc.next().toUpperCase();
+            double distance = sc.nextDouble();
+            Travel t;
 
-            switch (type) {
-                case "HOME":
-                    c = new Home(units);
+            switch (mode) {
+                case "BUS":
+                    t = new Bus(distance);
                     break;
-                case "SHOP":
-                    c = new Shop(units);
+                case "TRAIN":
+                    t = new Train(distance);
                     break;
-                case "FACTORY":
-                    c = new Factory(units);
+                case "FLIGHT":
+                    t = new Flight(distance);
                     break;
                 default:
                     continue;
             }
 
-            double bill = c.getBill();
-            System.out.printf("%s: %.2f%n", type, bill);
-            total += bill;
+            System.out.printf("%s: %.2f%n", mode, t.getTotal());
         }
 
-        System.out.printf("Total: %.2f%n", total);
         sc.close();
     }
 }
